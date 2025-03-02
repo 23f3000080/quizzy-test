@@ -1,0 +1,155 @@
+/* nav1 css */
+.nav {
+    background-color: #500202;
+    padding: 18px 18px;
+    text-align: right;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.li {
+    display: inline;
+    margin: 0 15px;
+}
+
+.li a {
+    
+    text-decoration: none;
+    color: #e7d014;
+    font-size: 20px;
+    padding: 8px 8px;
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.li a:hover {
+    background-color: #555;
+}
+
+.brand{
+    text-align: left;
+}
+
+.brand a {
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+
+/* for login and register form */
+/* form-styles.css */
+form {
+    max-width: 400px;
+    margin: auto;
+    padding: 70px;
+    background: #f4f4f4;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 70px;
+}
+
+.head {
+    text-align: center;
+    color: #0f0f0f;
+    margin-top: -25px;
+    background: #f98b0b;
+}
+
+.form label {
+    display: block;
+    margin: 10px 0 5px;
+    font-size: 20px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.form input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 10px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 18px;
+    font-family: "Lucida Console", "Courier New", monospace;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+}
+
+.update {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.update a {
+    text-decoration: none;
+    color: #2606ca;
+    font-size: 17px;
+}
+
+.update a:hover {
+    text-decoration: underline;
+}
+
+
+/* Flash Messages */
+.flash-message {
+    background-color: #f8d7da;
+    /* Light red for error or alerts */
+    color: #721c24;
+    /* Dark red text */
+    padding: 15px;
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+    position: absolute;
+    /* Position it relative to the page */
+    bottom: 80px;
+    /* Adjust to be below the navbar height */
+    right: 70px;
+    /* Align it to the left side of the page */
+    max-width: 300px;
+    /* Optional: Limit the width */
+    z-index: 1000;
+    /* Ensure it stays above other elements */
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    /* Add a subtle shadow */
+}
+
+.flash-message.success {
+    background-color: #103203;
+    color: #1fd249;
+    border: 1px solid #1a30da;
+}
+
+.flash-message.danger {
+    background-color: #a10707;
+    color: #eaa4ab;
+    border: 1px solid #1a30da;
+}
+
+.flash-message.info {
+    background-color: #d36a0e;
+    color: #1b1515;
+    border: 1px solid #1a30da;
+}

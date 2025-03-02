@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Quizzy -- Home
+{% endblock %}
+
+{% block style %}
+    <style>
+        .description {
+            background-color: #007bff;
+            text-align: center;
+            color: white;
+            padding: 30px 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .cd-2{
+            margin-left:15vh ;
+        }
+
+        .btn {
+            margin: 10px;
+            text-decoration: none;
+        }
+        .description a{
+            font-size: 20px;
+            color: rgb(140, 7, 196);
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="description">
+        <h1>Welcome to Quizzy!</h1>
+        <p>The ultimate platform to test your knowledge and challenge yourself with exciting quizzes.</p>
+        <a href="{{ url_for('register') }}" class="btn">Get Started</a>
+        <a href="{{ url_for('login') }}" class="btn">Login</a>
+    </div>
+
+    <div class="cd-2">
+        <h2>Why Choose Quizzy?</h2>
+        <p>✔ Engaging quizzes across multiple categories</p>
+        <p>✔ Track your progress and challenge your friends</p>
+        <p>✔ Compete for top scores and earn rewards</p>
+    </div>
+    
+    <footer class="footer">
+        <p>&copy; 2025 Quizzy. All Rights Reserved.</p>
+    </footer>
+</div>
+{% endblock %}

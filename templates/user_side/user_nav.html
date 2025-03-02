@@ -1,0 +1,55 @@
+<style>
+    /* Navbar styles */
+.nav {
+    background-color: #091a22;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+/* Brand styling */
+.brand {
+    font-weight: bold;
+    color: #ffe422;
+    font-size: 1.5rem;
+    margin-left: 20px;
+}
+
+/* Navigation styles */
+.ul {
+    list-style: none;
+    display: flex;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.li {
+    margin: 0 10px;
+}
+
+/* Link styling */
+.ul a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+/* Highlight active page */
+.ul a.active {
+    background-color: #1c3b4d;
+    font-weight: bold;
+}
+</style>
+
+<nav class="nav">
+    <span class="brand">Quizzy</span>
+    <ul class="ul">
+        <li class="li"><a href="{{url_for('user_dashboard')}}" class="{% if request.path == url_for('user_dashboard') %}active{% endif %}">Home</a></li>
+        <li class="li"><a href="{{url_for('user_score')}}" class="{% if request.path == url_for('user_score') %}active{% endif %}">Score</a></li>
+        <li class="li"><a href="{{url_for('user_summary')}}" class="{% if request.path == url_for('user_summary') %}active{% endif %}">Summary</a></li>
+        <li class="li"><a href="{{url_for('user_profile')}}" class="{% if request.path == url_for('user_profile') %}active{% endif %}">Profile</a></li>
+        <li class="li"><a href="{{url_for('logout')}}" class="{% if request.path == url_for('logout') %}active{% endif %}">Logout</a></li>
+    </ul>
+</nav>
