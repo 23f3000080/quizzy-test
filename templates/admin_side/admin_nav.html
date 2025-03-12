@@ -1,57 +1,40 @@
-<style>
-    /* Navbar styles with mixed gradient background */
-.nav {
-    background: linear-gradient(45deg, #ff8c00, #d7263d, #3a1c71);
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    border-radius: 8px;
-}
+<nav class="navbar navbar-expand-lg bg-body-tertiary" style="background: linear-gradient(90deg, #043c5c, #8706ba);">
+    <div class="container-fluid">
+        <!-- Logo and Brand Name -->
+        <a class="navbar-brand" href="#" style="color: yellow; font-weight: bold;">
+            <img src="/static/images/img1.jpeg" alt="Logo" width="30" height="24"
+                class="d-inline-block align-text-top" style="margin-right: 10px;">Quizzy
+        </a>
 
-/* Brand styling */
-.brand {
-    font-weight: bold;
-    color: #0207d2;
-    font-size: 2rem;
-    margin-left: 20px;
-}
+        <!-- Toggle Button for Mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-/* Navigation styles */
-.ul {
-    list-style: none;
-    display: flex;
-    margin: 0 auto;
-    padding: 0;
-}
+        <!-- Navbar Links & Search Bar -->
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <!-- Search Bar -->
+            <form class="d-flex ms-auto me-3" role="search">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
 
-.li {
-    margin: 0 10px;
-}
-
-/* Link styling */
-.ul a {
-    color: #58ffcd;
-    text-decoration: none;
-    padding: 8px 12px;
-    border-radius: 5px;
-    transition: background 0.3s ease, transform 0.2s ease;
-}
-
-/* Highlight active page */
-.ul a.active {
-    background-color: rgb(4 8 96 / 46%);
-    font-weight: bold;
-    transform: scale(1.1);
-}
-
-</style>
-
-<nav class="nav">
-    <span class="brand">Quizzy</span>
-    <ul class="ul">
-        <li class="li"><a href="{{url_for('admin_dashboard')}}" class="{% if request.path == url_for('admin_dashboard') %}active{% endif %}">Home</a></li>
-        <li class="li"><a href="{{url_for('view_quizzes')}}" class="{% if request.path == url_for('view_quizzes') %}active{% endif %}">Quiz</a></li>
-        <li class="li"><a href="{{url_for('summary')}}" class="{% if request.path == url_for('summary') %}active{% endif %}">Summary</a></li>
-        <li class="li"><a href="{{url_for('logout')}}" class="{% if request.path == url_for('logout') %}active{% endif %}">Logout</a></li>
-    </ul>
+            <!-- Navigation Links -->
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" style="color: #6fff27;" href="{{ url_for('admin_dashboard') }}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" style="color: #6fff27;" href="{{ url_for('view_quizzes') }}">Quiz</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" style="color: #6fff27;" href="{{ url_for('summary') }}">Summary</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" style="color: #6fff27;" href="{{ url_for('logout') }}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
 </nav>

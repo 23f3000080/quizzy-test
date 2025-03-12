@@ -58,6 +58,8 @@ class Quiz(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.now)
     updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
 
+    is_deleted = db.Column(db.Boolean, nullable=False, default=False) 
+
     #foreign-key
     subject_id = db.Column(db.Integer, db.ForeignKey('subject.id'), nullable=False)
     chapter_id = db.Column(db.Integer, db.ForeignKey('chapter.id'), nullable=False)
@@ -65,6 +67,15 @@ class Quiz(db.Model):
     #relationship
     subject = db.relationship('Subject', backref='quizzes', lazy="joined")
     chapter = db.relationship('Chapter', backref='quizzes', lazy="joined")
+
+    def soft_delete(self):
+        self.is_deleted = True
+        db.session.commit()
+
+    @staticmethod
+    def get_active_quizzes():
+        """Fetch quizzes that are not deleted."""
+        return Quiz.query.filter_by(is_deleted=False).all()
 
 class QuizResult(db.Model):
     id = db.Column(db.Integer, primary_key=True)

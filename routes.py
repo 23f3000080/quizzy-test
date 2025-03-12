@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session
 from app import app
-from models import db, User
+from models import db, User, Subject, Quiz
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from functools import wraps
@@ -135,19 +135,28 @@ def logout():
 @app.route('/admin/dashboard')
 @admin_required
 def admin_dashboard():
-    return render_template("admin_side/admin_dashboard.html")
+    user = session.get('name', 'User')
+    subjects = Subject.query.all()
+    return render_template("admin_side/admin_dashboard.html", user=user, subjects=subjects)
 
 #Admin side view Quizzes
 @app.route('/admin/view_quizzes')
 @admin_required
 def view_quizzes():
-    return render_template("admin_side/view_quizzes.html")
+    quizzes = Quiz.query.all()
+    return render_template("admin_side/view_quizzes.html", quizzes=quizzes)
 
 #Admin side summary
 @app.route('/admin/summary')
 @admin_required
 def summary():
     return render_template("admin_side/summary.html")
+
+#admin seach route
+@app.route('/admin/search')
+@admin_required
+def search():
+    return render_template("admin_side/search.html")
 
 #User Side Routes
 #User side dashboard
