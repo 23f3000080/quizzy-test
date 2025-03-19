@@ -43,7 +43,7 @@ class Question(db.Model):
     option2 = db.Column(db.String(200), nullable=False)
     option3 = db.Column(db.String(200), nullable=False)
     option4 = db.Column(db.String(200), nullable=False)
-    correct_option = db.Column(db.String(200), nullable=False)
+    correct_option = db.Column(db.String(1), nullable=False)
     marks = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.now)
     #foreign-key
@@ -80,7 +80,8 @@ class Quiz(db.Model):
 class QuizResult(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     score = db.Column(db.Integer, nullable=False)
-    time_taken = db.Column(db.Time, nullable=False)
+    total_marks = db.Column(db.Integer, nullable=False)
+    total_questions = db.Column(db.Integer, nullable=False)
     quiz_attempt_date = db.Column(db.DateTime, default=datetime.now)
 
     #foreign-key

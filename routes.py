@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, session
 from app import app
-from models import db, User, Subject, Quiz
+from models import db, User, Subject, Quiz, Question, QuizResult
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import wraps
 
 @app.route('/')
@@ -163,13 +163,38 @@ def search():
 @app.route('/user/dashboard')
 @user_required
 def user_dashboard():
-    return render_template("user_side/user_dashboard.html")
+    user_id = session.get('id')
+    user = session.get('name', 'User')
+    quizzes = Quiz.query.all()
+
+    # Get the list of quiz IDs that the user has attempted
+    attempted_quiz = (
+        db.session.query(QuizResult.quiz_id)
+        .filter(QuizResult.user_id == user_id)
+        .all()
+    )
+    attempted_quiz_id = [attempt.quiz_id for attempt in attempted_quiz]
+    return render_template("user_side/user_dashboard.html", user=user, quizzes=quizzes, attempted_quiz_id=attempted_quiz_id)
 
 #User side score route
 @app.route('/user/score')
 @user_required
 def user_score():
-    return render_template("user_side/user_score.html")
+    user_id = session.get('id')
+
+    if not user_id:
+        flash("You must be logged in to view results.", "danger")
+        return redirect(url_for('login'))
+
+    # Fetch all quiz attempts by the user
+    attempts = (
+        db.session.query(QuizResult, Quiz.title)
+        .join(Quiz, QuizResult.quiz_id == Quiz.id)
+        .filter(QuizResult.user_id == user_id)
+        .order_by(QuizResult.quiz_attempt_date.desc())  # Show latest attempts first
+        .all()
+    )
+    return render_template("user_side/user_score.html", attempts=attempts)
 
 #user side summary route
 @app.route('/user/summary')
@@ -178,7 +203,131 @@ def user_summary():
     return render_template("user_side/user_summary.html")
 
 #user profile update route
-@app.route('/user/profile')
+@app.route('/user/profile', methods=['GET', 'POST'])
 @user_required
 def user_profile():
-    return render_template("user_side/user_profile.html")
+    user = User.query.get(session['id'])
+    if request.method == 'POST':
+        cpassword = request.form.get('cpassword')
+        name = request.form.get('name')
+        dob = request.form.get('dob')
+        qualification = request.form.get('qualification')
+
+        if not all([cpassword, name, dob, qualification]):
+            flash('Please fill all the fields', 'danger')
+            return redirect(url_for('user_profile'))
+        
+        if not check_password_hash(user.password, cpassword):
+            flash('Incorrect Current Password', 'danger')
+            return redirect(url_for('user_profile'))
+        
+        if name == user.name and dob == user.dob and qualification == user.qualification:
+            flash('No changes found', 'info')
+            return redirect(url_for('user_profile'))
+        
+        session['name'] = name
+        user.name = name
+        user.dob = dob
+        user.qualification = qualification
+        db.session.commit()
+        flash('Profile updated successfully', 'success')
+        return redirect(url_for('user_profile'))
+
+    return render_template("user_side/user_profile.html", user=user)
+
+#start quiz route
+@app.route('/quiz/start/<int:quiz_id>')
+@user_required
+def start_quiz(quiz_id):
+    quiz = Quiz.query.get(quiz_id)
+    user_id = session.get('id')
+    questions = Question.query.filter_by(chapter_id=quiz.chapter_id)
+
+    # Check if the user has already attempted the quiz
+    attempt = QuizResult.query.filter_by(user_id=user_id, quiz_id=quiz_id).first()
+    if attempt:
+        flash("You have already attempted this quiz.", "danger")
+        return redirect(url_for('user_dashboard'))
+    return render_template("user_side/start_quiz.html", quiz=quiz, questions=questions)
+
+#submit quiz route
+@app.route('/submit/quiz/<quiz_id>', methods=['POST'])
+@user_required
+def submit_quiz(quiz_id):
+    quiz = Quiz.query.get_or_404(quiz_id)
+    user_id = session.get('id')
+
+    if not user_id:
+        flash("You must be logged in to submit the quiz.", "danger")
+        return redirect(url_for('login'))
+
+    questions = Question.query.filter_by(chapter_id=quiz.chapter_id).all()
+    total_marks = sum(q.marks for q in questions)
+    
+    # Create an attempt entry before checking answers
+    attempt = QuizResult(
+        user_id=user_id,
+        quiz_id=quiz.id,
+        score=0,  # Initial score, updated later
+        total_marks=total_marks,
+        total_questions=len(questions)
+    )
+    db.session.add(attempt)
+    db.session.commit()
+
+    score = 0
+    for question in questions:
+        user_answer = request.form.get(f'question_{question.id}')
+        if user_answer and str(user_answer) == str(question.correct_option):
+            score += question.marks
+
+    # Update the attempt record with the final score
+    attempt.score = score
+    db.session.commit()
+
+    percentage_score = (score / total_marks) * 100
+    flash(f"Quiz submitted successfully! You scored {score} out of {total_marks} ({percentage_score:.2f}%)", "success")
+    return redirect(url_for('user_dashboard'))
+
+@app.route('/user/view/quiz/<quiz_id>')
+@user_required
+def view_attempted_quiz(quiz_id):
+    user_id = session.get('id')
+    quiz = Quiz.query.get_or_404(quiz_id)
+    questions = Question.query.filter_by(chapter_id=quiz.chapter_id).all()
+
+    # Fetch the user's attempt for this quiz
+    attempt = QuizResult.query.filter_by(user_id=user_id, quiz_id=quiz_id).first()
+    if not attempt:
+        flash("You have not attempted this quiz yet.", "danger")
+        return redirect(url_for('user_dashboard'))
+
+    return render_template("user_side/view_attempted_quiz.html", quiz=quiz, questions=questions, attempt=attempt)
+
+@app.route('/forget/password', methods=['GET', 'POST'])
+def forget_password():
+    if request.method == 'POST':
+        username = request.form.get('username').strip()
+        dob = request.form.get('dob').strip()
+        password = request.form.get('password').strip()
+
+        if not all([username, dob, password]):
+            flash('All fields are required', 'danger')
+            return redirect(url_for('forget_password'))
+
+        user = User.query.filter_by(username=username).first()
+        if not user:
+            flash('User does not exist', 'danger')
+            return redirect(url_for('forget_password'))
+        
+        if user.dob != dob:
+            flash('Date of birth is incorrect', 'danger')
+            return redirect(url_for('forget_password'))
+        
+        user.password = generate_password_hash(password)
+        db.session.commit()
+        flash('Password updated successfully', 'success')
+        return redirect(url_for('login'))
+
+    return render_template('forget_password.html')
+

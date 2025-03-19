@@ -13,6 +13,7 @@ Quizzy -- Home
             padding: 30px 20px;
             border-radius: 10px;
             margin-bottom: 30px;
+            margin-top: 15px
         }
         .cd-2{
             margin-left:15vh ;
@@ -24,7 +25,7 @@ Quizzy -- Home
         }
         .description a{
             font-size: 20px;
-            color: rgb(140, 7, 196);
+            color: rgb(195, 218, 20);
         }
     </style>
 {% endblock %}
@@ -34,7 +35,7 @@ Quizzy -- Home
     <div class="description">
         <h1>Welcome to Quizzy!</h1>
         <p>The ultimate platform to test your knowledge and challenge yourself with exciting quizzes.</p>
-        <a href="{{ url_for('register') }}" class="btn">Get Started</a>
+        <a href="{{ url_for('register') }}" class="btn">Register to start</a>
         <a href="{{ url_for('login') }}" class="btn">Login</a>
     </div>
 
