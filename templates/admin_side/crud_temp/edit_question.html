@@ -8,10 +8,12 @@
                 <div class="card-header bg-primary text-white text-center">
                     <h3 class="mb-0">Edit Question</h3>
                 </div>
-                <div class="card-body">
+                <div class="card-body" style="background-color: #a3d3e1;">
                     <!-- Question Form -->
                     <form action="{{ url_for('edit_question', question_id=question.id) }}" method="POST">
                         <div class="mb-3">
+                            <label for="questionId">Question ID</label>
+                            <input type="text" class="form-control" id="questionId" name="questionId" value="{{ question.questionId }}" required>
                             <label for="question" class="form-label">Question</label>
                             <textarea name="question" id="question" class="form-control" required>{{ question.title }}</textarea>
                             <label for="option1" class="form-label">Option 1</label>

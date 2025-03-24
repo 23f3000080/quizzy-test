@@ -6,28 +6,37 @@
             <h2>All Quizzes</h2>
             <table class="table table-bordered table-striped">
                 <thead class="table-dark">
-                    <tr>
+                    <tr class="text-center">
+                        <th>Quiz ID</th>
                         <th>Title</th>
                         <th>Description</th>
                         <th>Subject</th>
                         <th>Chapter</th>
                         <th>Questions</th>
                         <th>Duration (min)</th>
+                        <th>Due Date</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for quiz in quizzes %}
                         <tr>
+                            <td>{{ quiz.quizId }}</td>
                             <td>{{ quiz.title }}</td>
                             <td>{{ quiz.description }}</td>
                             <td>{{ quiz.subject.sub_name }}</td>
                             <td>{{ quiz.chapter.chapter_name }}</td>
                             <td>{{ quiz.number_of_questions }}</td>
                             <td>{{ quiz.duration }}</td>
+                            <td>{{ quiz.due_date.strftime('%d-%m-%Y %H:%M') if quiz.due_date else 'No Due Date' }}</td>
+                            
                             {% if quiz.is_deleted %}
                                 <td>
-                                    <button class="btn btn-primary" style="background-color: rgb(205, 83, 83);">Deleted</button>
+                                    <a href="{{ url_for('permanently_delete_quiz', quiz_id=quiz.id) }}" class="btn btn-danger">Permanently Delete</a>
+                                    <!-- <button class="btn btn-primary" style="background-color: rgb(205, 83, 83);">Deleted</button> -->
+                                    <form action="{{ url_for('reactive_quiz', quiz_id=quiz.id) }}" method="POST" style="display:inline;">
+                                        <button type="submit" class="btn btn-success btn-sm">Reactive</button>
+                                    </form>
                                 </td>
                             {% else %}
                                 <td>

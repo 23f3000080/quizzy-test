@@ -15,8 +15,8 @@
         <!-- Navbar Links & Search Bar -->
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <!-- Search Bar -->
-            <form class="d-flex ms-auto me-3" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <form action="{{ url_for('admin_search_result') }}" method="POST" class="d-flex ms-auto me-3" role="search">
+                <input class="form-control me-2" type="search" placeholder="Search..." aria-label="Search" name="search">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
 

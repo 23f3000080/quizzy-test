@@ -12,6 +12,8 @@
                     <!-- Question Form -->
                     <form action="{{ url_for('add_question', chapter_id=chapter_id) }}" method="POST">
                         <div class="mb-3">
+                            <label for="questionId">Question ID</label>
+                            <input type="text" class="form-control" id="questionId" name="questionId" required>
                             <label for="question" class="form-label">Question</label>
                             <textarea name="question" id="question" class="form-control" required></textarea>
                             <label for="option1" class="form-label">Option 1</label>

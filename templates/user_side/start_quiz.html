@@ -27,15 +27,16 @@
     </style>
 
     <div class="container mt-4">
-        <h1 class="text-center mb-4">Quiz-{{ quiz.id }}</h1>
+        <h2 class="text-center mb-4">Quiz</h2>
 
         <div class="row mb-4 align-items-center quiz-info">
             <div class="col-md-6">
+                <p class="fw-semibold">Quiz ID: {{ quiz.quizId }}</p>
                 <p class="fw-semibold">Quiz Name: {{ quiz.title }}</p>
                 <p class="fw-semibold">Subject: {{ quiz.subject.sub_name }}</p>
-                <p class="fw-semibold">Chapter: {{ quiz.chapter.chapter_name }}</p>
             </div>
             <div class="col-md-4">
+                <p class="fw-semibold">Chapter: {{ quiz.chapter.chapter_name }}</p>
                 <p class="fw-semibold">Number of Questions: {{ quiz.number_of_questions }}</p>
                 <p class="fw-semibold">Duration: {{ quiz.duration }} minutes</p>
             </div>
@@ -70,7 +71,7 @@
             </div>
             {% endfor %}
 
-            <button type="submit" class="btn btn-primary w-100">Submit Quiz</button>
+            <button type="submit" class="btn btn-primary w-100 mb-4">Submit Quiz</button>
         </form>
     </div>
 {% endblock %}

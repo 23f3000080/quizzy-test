@@ -10,16 +10,17 @@
         
         <div class="quiz-info card p-3 mb-4 shadow-sm" style="background-color: bisque;">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
+                    <p class="fw-bold">🆔 Quiz ID: <span class="fw-normal">{{ quiz.quizId }}</span></p>
                     <p class="fw-bold">📘 Quiz Name: <span class="fw-normal">{{ quiz.title }}</span></p>
                     <p class="fw-bold">📚 Subject: <span class="fw-normal">{{ quiz.subject.sub_name }}</span></p>
-                    <p class="fw-bold">📖 Chapter: <span class="fw-normal">{{ quiz.chapter.chapter_name }}</span></p>
                 </div>
                 <div class="col-md-4">
+                    <p class="fw-bold">📖 Chapter: <span class="fw-normal">{{ quiz.chapter.chapter_name }}</span></p>
                     <p class="fw-bold">✅ Number of Questions: <span class="fw-normal">{{ quiz.number_of_questions }}</span></p>
                     <p class="fw-bold">⏳ Duration: <span class="fw-normal">{{ quiz.duration }} minutes</span></p>
                 </div>
-                <div class="col-md-2 text-center">
+                <div class="col-md-4 text-center">
                     <p class="fw-bold text-success">🏅 Score: <span class="fw-normal">{{ attempt.score }}</span></p>
                     <p class="fw-bold text-danger">📍 Total Marks: <span class="fw-normal">{{ attempt.total_marks }}</span></p>
                 </div>
@@ -38,6 +39,14 @@
                         <li>4. {{ question.option4 }}</li>
                     </ul>
                     <p class="fw-bold text-success">✔️ Correct Answer: <span class="fw-normal">{{ question.correct_option }}</span></p>
+                    <p class="fw-bold 
+                        {% if question.selected_option == question.correct_option %}
+                            text-success
+                        {% else %}
+                            text-danger
+                        {% endif %}">
+                        📝 Your Answer: <span class="fw-normal">{{ question.selected_option }}</span>
+                    </p>
                 </div>
             {% endfor %}
         </div>

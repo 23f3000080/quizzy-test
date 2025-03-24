@@ -13,7 +13,7 @@
             <table class="table table-bordered table-striped">
                 <thead class="table-dark bg-primary">
                     <tr class="text-center">
-                        <th>S.No.</th>
+                        <th>Quiz ID</th>
                         <th>Quiz Title</th>
                         <th>Total Questions</th>
                         <th>Total Marks</th>
@@ -23,9 +23,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for attempt, quiz_title in attempts %}
+                    {% for attempt, quiz_title, quizId in attempts %}
                     <tr class="text-center">
-                        <td>{{ loop.index }}</td>
+                        <td>{{ quizId }}</td>
                         <td>{{ quiz_title }}</td>
                         <td>{{ attempt.total_questions }}</td>
                         <td>{{ attempt.total_marks }}</td>
