@@ -13,6 +13,7 @@ import os
 def home():
     return render_template('home.html')
 
+# Route to register new user
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -52,6 +53,7 @@ def register():
 
     return render_template('register.html')
 
+#login route
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -84,7 +86,7 @@ def login():
             return redirect(url_for('user_dashboard'))
     return render_template('login.html')
 
-# decorator for auth required
+# decorator for user required
 def user_required(func):
     """Restrict access to user-only pages (block admins)."""
     @wraps(func)
@@ -183,7 +185,8 @@ def summary():
 def search():
     return render_template("admin_side/search.html")
 
-#User Side Routes
+#--------------User Side Routes----------------
+
 #User side dashboard
 @app.route('/user/dashboard')
 @user_required
@@ -223,6 +226,7 @@ def user_score():
     )
     return render_template("user_side/user_score.html", attempts=attempts)
 
+#User side summary route
 @app.route('/user/summary')
 @user_required
 def user_summary():
@@ -272,8 +276,6 @@ def user_summary():
     plt.close()
 
     return render_template('user_side/user_summary.html', avg_score=avg_score, graph_url=url_for('static', filename=f'graph/{graph_filename}'))
-
-
 
 #user profile update route
 @app.route('/user/profile', methods=['GET', 'POST'])
@@ -388,7 +390,7 @@ def submit_quiz(quiz_id):
     flash(f"Quiz submitted successfully! You scored {score} out of {total_marks} ({percentage_score:.2f}%)", "success")
     return redirect(url_for('user_dashboard'))
 
-
+# View attempted quiz route
 @app.route('/user/view/quiz/<quiz_id>')
 @user_required
 def view_attempted_quiz(quiz_id):
@@ -419,6 +421,7 @@ def view_attempted_quiz(quiz_id):
         attempt=attempt
     )
 
+# Forget password route
 @app.route('/forget/password', methods=['GET', 'POST'])
 def forget_password():
     if request.method == 'POST':
@@ -438,7 +441,7 @@ def forget_password():
         if user.dob != dob:
             flash('Date of birth is incorrect', 'danger')
             return redirect(url_for('forget_password'))
-        
+
         user.password = generate_password_hash(password)
         db.session.commit()
         flash('Password updated successfully', 'success')
@@ -474,6 +477,7 @@ def admin_search_result():
         }
     return render_template("admin_side/search_result.html", results=results, search_query=query)
 
+# Search Function for user
 @app.route('/user/search/result', methods=['POST'])
 @user_required
 def user_search_result():

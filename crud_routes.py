@@ -5,6 +5,9 @@ from routes import user_required, admin_required
 from datetime import datetime
 import json
 
+# ----------Admin CRUD routes----------
+
+# Add subject route
 @app.route('/admin/add_subject', methods=['GET', 'POST'])
 @admin_required
 def add_subject():
@@ -30,6 +33,7 @@ def add_subject():
         return redirect(url_for('admin_dashboard'))
     return render_template('admin_side/crud_temp/add_subject.html')
 
+# edit subject route
 @app.route('/admin/edit/subject/<int:subject_id>', methods=['GET', 'POST'])
 @admin_required
 def edit_subject(subject_id):
@@ -51,7 +55,7 @@ def edit_subject(subject_id):
         return redirect(url_for('admin_dashboard'))
     return render_template('admin_side/crud_temp/edit_subject.html', subject=subject)
 
-
+# delete subject route
 @app.route('/admin/delete/<int:subject_id>', methods=['GET','POST'])
 @admin_required
 def delete_subject(subject_id):
@@ -77,6 +81,7 @@ def delete_subject(subject_id):
         flash('Error deleting subject. Make sure there are no related chapters.', 'danger')
     return redirect(url_for('admin_dashboard'))
 
+# Add chapter route
 @app.route('/admin/add_chapter/<int:subject_id>', methods=['GET', 'POST'])
 @admin_required
 def add_chapter(subject_id):
@@ -99,6 +104,7 @@ def add_chapter(subject_id):
         return redirect(url_for('admin_dashboard'))
     return render_template('admin_side/crud_temp/add_chapter.html', subject=subject)
 
+# delete chapter route
 @app.route('/admin/delete_chapter/<int:chapter_id>', methods=['GET','POST'])
 @admin_required
 def delete_chapter(chapter_id):
@@ -114,6 +120,7 @@ def delete_chapter(chapter_id):
     flash('Chapter deleted successfully', 'success')
     return redirect(url_for('admin_dashboard'))
 
+# edit chapter route
 @app.route('/admin/edit_chapter/<int:chapter_id>', methods=['GET', 'POST'])
 @admin_required
 def edit_chapter(chapter_id):
@@ -131,6 +138,7 @@ def edit_chapter(chapter_id):
         return redirect(url_for('admin_dashboard'))
     return render_template('admin_side/crud_temp/edit_chapter.html', chapter=chapter)
 
+# Add question route
 @app.route('/admin/add_question/<int:chapter_id>', methods=['GET', 'POST'])
 @admin_required
 def add_question(chapter_id):
@@ -160,6 +168,7 @@ def add_question(chapter_id):
         return redirect(url_for('add_question', chapter_id=chapter_id))
     return render_template('admin_side/crud_temp/add_question.html', chapter_id=chapter_id)
 
+# View questions route
 @app.route('/admin/view/questions/<int:chapter_id>', methods=['GET','POST'])
 @admin_required
 def view_questions(chapter_id):
@@ -167,6 +176,7 @@ def view_questions(chapter_id):
     questions = Question.query.filter_by(chapter_id=chapter_id).all()
     return render_template('admin_side/crud_temp/view_question.html', chapter=chapter, questions=questions)
 
+# Edit question route
 @app.route('/admin/edit/question/<int:question_id>', methods=['GET', 'POST'])
 @admin_required
 def edit_question(question_id):
@@ -194,6 +204,7 @@ def edit_question(question_id):
 
     return render_template('admin_side/crud_temp/edit_question.html', question=question)
 
+# Delete question route
 @app.route('/admin/delete_question/<int:question_id>', methods=['GET','POST'])
 @admin_required
 def delete_question(question_id):
@@ -203,7 +214,7 @@ def delete_question(question_id):
     flash('Question deleted successfully', 'success')
     return redirect(url_for('view_questions', chapter_id=question.chapter_id))
 
-# Create Quiz
+# Create Quiz route
 @app.route('/admin/create/quiz', methods=['GET', 'POST'])
 @admin_required
 def create_quiz():
