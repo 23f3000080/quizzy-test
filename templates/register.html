@@ -16,14 +16,6 @@ Quizzy -- Register
         box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
     }
 
-    /* Style form heading */
-    .head2 {
-        text-align: center;
-        color: #333;
-        font-size: 24px;
-        margin-bottom: 20px;
-    }
-
     /* Use Flexbox for label-input alignment */
     .form-group {
         display: flex;
@@ -98,52 +90,59 @@ Quizzy -- Register
 {% endblock %}
 
 {% block content %}
-<form action="{{ url_for('register') }}" method="POST">
-    <div>
-        <h1 class="head2">Welcome To Register Page</h1>
-    </div>
-    <div class="form-container">
-        <div class="form-group">
-            <label for="username">Username:</label>
-            <input type="email" id="username" name="username" placeholder="Enter Your E-mail">
+<div style="margin:10px; background: linear-gradient(135deg, #a73b3b, #0c0c0d); height: 100vh; display: flex; justify-content: center; align-items: center; border-radius: 10px;">
+    <form action="{{ url_for('register') }}" method="POST">
+        <div>
+            <h1 class="head">Welcome To Register Page</h1>
         </div>
-
-        <div class="form-group">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" placeholder="Enter your full name">
+        <div class="form-container">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="email" id="username" name="username" placeholder="Enter Your E-mail">
+            </div>
+    
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" placeholder="Enter your full name">
+            </div>
+    
+            <div class="form-group">
+                <label for="dob">DOB:</label>
+                <input type="date" id="dob" name="dob">
+            </div>
+    
+            <div class="form-group">
+                <label for="qualification">Highest Qualification:</label>
+                <select name="qualification" id="qualification">
+                    <option value="" disabled selected>Select Qualification</option>
+                    <option value="High">School</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Diploma">Diploma</option>
+                    <option value="Bachelor's Degree">Bachelor's Degree</option>
+                    <option value="Master's Degree">Master's Degree</option>
+                    <option value="Ph.D">Ph.D</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+    
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Enter Your Password">
+            </div>
+    
+            <div class="form-group">
+                <label for="cpassword">Confirm Password:</label>
+                <input type="password" id="cpassword" name="cpassword" placeholder="Enter Your Confirm Password">
+            </div>
+    
+            <button type="submit" class="btn-primary">Register Now</button>
         </div>
-
-        <div class="form-group">
-            <label for="dob">DOB:</label>
-            <input type="date" id="dob" name="dob">
+        <div style="text-align: end; margin-top: 20px; background: #ffffff; padding: 10px; border-radius: 8px;">
+            Already have an account?
+            <a href="{{ url_for('login') }}" style="background-color: #46b171; border-radius:3px">Existing User</a>
         </div>
-
-        <div class="form-group">
-            <label for="qualification">Highest Qualification:</label>
-            <select name="qualification" id="qualification">
-                <option value="" disabled selected>Select Qualification</option>
-                <option value="High">School</option>
-                <option value="Intermediate">Intermediate</option>
-                <option value="Diploma">Diploma</option>
-                <option value="Bachelor's Degree">Bachelor's Degree</option>
-                <option value="Master's Degree">Master's Degree</option>
-                <option value="Ph.D">Ph.D</option>
-                <option value="Other">Other</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" placeholder="Enter Your Password">
-        </div>
-
-        <div class="form-group">
-            <label for="cpassword">Confirm Password:</label>
-            <input type="password" id="cpassword" name="cpassword" placeholder="Enter Your Confirm Password">
-        </div>
-
-        <button type="submit" class="btn-primary">Register Now</button>
-    </div>
-</form>
+    </form>
+    
+</div>
 
 {% endblock %}

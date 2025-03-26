@@ -54,13 +54,20 @@ form {
     border-radius: 8px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     margin-top: 70px;
+    border-color: #6ce378;
+    box-shadow: 5px 5px #3d94cec4;
+
+    border-width: 2px;
+    border-style: solid;
 }
 
 .head {
     text-align: center;
     color: #0f0f0f;
     margin-top: -25px;
-    background: #f98b0b;
+    padding: 5px;
+    background: #06cc3b;
+    border-radius: 5px;
 }
 
 .form label {
@@ -76,6 +83,8 @@ form {
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
 }
 
 .btn-primary {
@@ -102,10 +111,15 @@ form {
 
 .update a {
     text-decoration: none;
+    margin-top: 3px;
+    padding: 2px;
     color: #2606ca;
     font-size: 17px;
+    background: #2ac460;
+    border-radius: 4px;
 }
 
 .update a:hover {
-    text-decoration: underline;
+    text-decoration: none;
+    background-color: #41851d;
 }
