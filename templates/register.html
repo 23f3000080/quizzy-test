@@ -91,7 +91,7 @@ Quizzy -- Register
 
 {% block content %}
 <div style="margin:10px; background: linear-gradient(135deg, #a73b3b, #0c0c0d); height: 100vh; display: flex; justify-content: center; align-items: center; border-radius: 10px;">
-    <form action="{{ url_for('register') }}" method="POST">
+    <form action="{{ url_for('main.register') }}" method="POST">
         <div>
             <h1 class="head">Welcome To Register Page</h1>
         </div>
@@ -139,7 +139,7 @@ Quizzy -- Register
         </div>
         <div style="text-align: end; margin-top: 20px; background: #ffffff; padding: 10px; border-radius: 8px;">
             Already have an account?
-            <a href="{{ url_for('login') }}" style="background-color: #46b171; border-radius:3px">Existing User</a>
+            <a href="{{ url_for('main.login') }}" style="background-color: #46b171; border-radius:3px">Existing User</a>
         </div>
     </form>
     

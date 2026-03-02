@@ -1,14 +1,16 @@
-from flask import Flask, render_template, request, flash, redirect, url_for, session
-from app import app
+from flask import Flask, render_template, request, flash, redirect, url_for, session, Blueprint
+
 from models import db, Subject, Chapter, Question, Quiz, User, QuizResult, UserAnswer
 from routes import user_required, admin_required
 from datetime import datetime
 import json
 
+crud = Blueprint('crud', __name__)
+
 # ----------Admin CRUD routes----------
 
 # Add subject route
-@app.route('/admin/add_subject', methods=['GET', 'POST'])
+@crud.route('/admin/add_subject', methods=['GET', 'POST'])
 @admin_required
 def add_subject():
     if request.method == 'POST':
@@ -18,29 +20,29 @@ def add_subject():
 
         if not all([subject_Id, sub_name]):
             flash('All fields are required!', 'danger')
-            return redirect(url_for('add_subject'))
+            return redirect(url_for('crud.add_subject'))
 
         subjectId = Subject.query.filter_by(subjectId=subject_Id).first()
         subjectName = Subject.query.filter_by(sub_name=sub_name).first()
         if subjectId or subjectName:
             flash('Subject already exists!', 'danger')
-            return redirect(url_for('add_subject'))
+            return redirect(url_for('crud.add_subject'))
         
         new_subject = Subject(subjectId=subject_Id, sub_name=sub_name, description=description)
         db.session.add(new_subject)
         db.session.commit()
         flash('Subject added successfully', 'success')
-        return redirect(url_for('admin_dashboard'))
+        return redirect(url_for('main.admin_dashboard'))
     return render_template('admin_side/crud_temp/add_subject.html')
 
 # edit subject route
-@app.route('/admin/edit/subject/<int:subject_id>', methods=['GET', 'POST'])
+@crud.route('/admin/edit/subject/<int:subject_id>', methods=['GET', 'POST'])
 @admin_required
 def edit_subject(subject_id):
     subject = Subject.query.get(subject_id)
     if not subject:
         flash('Subject not found', 'info')
-        return redirect('admin_dashboard')
+        return redirect('main.admin_dashboard')
     
     if request.method == 'POST':
         subject_Id = request.form.get('subjectId', '').strip()
@@ -52,11 +54,11 @@ def edit_subject(subject_id):
         subject.description = description
         db.session.commit()
         flash('Subject updated successfully', 'success')
-        return redirect(url_for('admin_dashboard'))
+        return redirect(url_for('main.admin_dashboard'))
     return render_template('admin_side/crud_temp/edit_subject.html', subject=subject)
 
 # delete subject route
-@app.route('/admin/delete/<int:subject_id>', methods=['GET','POST'])
+@crud.route('/admin/delete/<int:subject_id>', methods=['GET','POST'])
 @admin_required
 def delete_subject(subject_id):
     subject = Subject.query.get(subject_id)
@@ -65,7 +67,7 @@ def delete_subject(subject_id):
     quizzes = Quiz.query.filter_by(subject_id=subject_id).all()
     if quizzes:
         flash('Error deleting subject. Make sure there are no related quizzes.', 'info')
-        return redirect(url_for('admin_dashboard'))
+        return redirect(url_for('main.admin_dashboard'))
 
     #delete related chapters
     for chapter in subject.chapters:
@@ -79,10 +81,10 @@ def delete_subject(subject_id):
     except Exception as e:
         db.session.rollback()
         flash('Error deleting subject. Make sure there are no related chapters.', 'danger')
-    return redirect(url_for('admin_dashboard'))
+    return redirect(url_for('main.admin_dashboard'))
 
 # Add chapter route
-@app.route('/admin/add_chapter/<int:subject_id>', methods=['GET', 'POST'])
+@crud.route('/admin/add_chapter/<int:subject_id>', methods=['GET', 'POST'])
 @admin_required
 def add_chapter(subject_id):
     subject = Subject.query.get(subject_id)
@@ -95,17 +97,17 @@ def add_chapter(subject_id):
         chapterName = Chapter.query.filter_by(chapter_name=chapter_name, subject_id=subject_id).first()
         if chapterId or chapterName:
             flash('Chapter already exists!', 'danger')
-            return redirect(url_for('add_chapter'))
+            return redirect(url_for('crud.add_chapter'))
         
         new_chapter = Chapter(chapterId=chapter_Id,chapter_name=chapter_name, description=description, subject_id=subject_id)
         db.session.add(new_chapter)
         db.session.commit()
         flash('Chapter added successfully', 'success')
-        return redirect(url_for('admin_dashboard'))
+        return redirect(url_for('main.admin_dashboard'))
     return render_template('admin_side/crud_temp/add_chapter.html', subject=subject)
 
 # delete chapter route
-@app.route('/admin/delete_chapter/<int:chapter_id>', methods=['GET','POST'])
+@crud.route('/admin/delete_chapter/<int:chapter_id>', methods=['GET','POST'])
 @admin_required
 def delete_chapter(chapter_id):
     chapter = Chapter.query.get(chapter_id)
@@ -113,15 +115,15 @@ def delete_chapter(chapter_id):
     quizzes = Quiz.query.filter_by(chapter_id=chapter_id).all()
     if quizzes:
         flash('Error deleting chapter. Make sure there are no related quizzes.', 'info')
-        return redirect(url_for('admin_dashboard'))
+        return redirect(url_for('main.admin_dashboard'))
     
     db.session.delete(chapter)
     db.session.commit()
     flash('Chapter deleted successfully', 'success')
-    return redirect(url_for('admin_dashboard'))
+    return redirect(url_for('main.admin_dashboard'))
 
 # edit chapter route
-@app.route('/admin/edit_chapter/<int:chapter_id>', methods=['GET', 'POST'])
+@crud.route('/admin/edit_chapter/<int:chapter_id>', methods=['GET', 'POST'])
 @admin_required
 def edit_chapter(chapter_id):
     chapter = Chapter.query.get(chapter_id)
@@ -135,11 +137,11 @@ def edit_chapter(chapter_id):
         chapter.description = description
         db.session.commit()
         flash('Chapter updated successfully', 'success')
-        return redirect(url_for('admin_dashboard'))
+        return redirect(url_for('main.admin_dashboard'))
     return render_template('admin_side/crud_temp/edit_chapter.html', chapter=chapter)
 
 # Add question route
-@app.route('/admin/add_question/<int:chapter_id>', methods=['GET', 'POST'])
+@crud.route('/admin/add_question/<int:chapter_id>', methods=['GET', 'POST'])
 @admin_required
 def add_question(chapter_id):
     if request.method == 'POST':
@@ -154,22 +156,22 @@ def add_question(chapter_id):
 
         if not all([question_Id, question, option1, option2, option3, option4, answer, marks]):
             flash('All fields are required', 'danger')
-            return redirect(url_for('add_question', chapter_id=chapter_id))
+            return redirect(url_for('crud.add_question', chapter_id=chapter_id))
 
         questionId = Question.query.filter_by(questionId=question_Id).first()
         if questionId:
             flash('Question Id already exists!', 'danger')
-            return redirect(url_for('add_question', chapter_id=chapter_id))
+            return redirect(url_for('crud.add_question', chapter_id=chapter_id))
 
         new_question = Question(questionId=question_Id, title=question, option1=option1, option2=option2, option3=option3, option4=option4, correct_option=answer, marks=marks, chapter_id=chapter_id)
         db.session.add(new_question)
         db.session.commit()
         flash('Question added successfully', 'success')
-        return redirect(url_for('add_question', chapter_id=chapter_id))
+        return redirect(url_for('crud.add_question', chapter_id=chapter_id))
     return render_template('admin_side/crud_temp/add_question.html', chapter_id=chapter_id)
 
 # View questions route
-@app.route('/admin/view/questions/<int:chapter_id>', methods=['GET','POST'])
+@crud.route('/admin/view/questions/<int:chapter_id>', methods=['GET','POST'])
 @admin_required
 def view_questions(chapter_id):
     chapter = Chapter.query.get(chapter_id)
@@ -177,14 +179,14 @@ def view_questions(chapter_id):
     return render_template('admin_side/crud_temp/view_question.html', chapter=chapter, questions=questions)
 
 # Edit question route
-@app.route('/admin/edit/question/<int:question_id>', methods=['GET', 'POST'])
+@crud.route('/admin/edit/question/<int:question_id>', methods=['GET', 'POST'])
 @admin_required
 def edit_question(question_id):
     question = Question.query.get(question_id)
 
     if not question:
         flash("Question not found!", "danger")
-        return redirect(url_for('admin_dashboard'))
+        return redirect(url_for('main.admin_dashboard'))
     if request.method == 'POST':
         question.questionId = request.form.get('questionId', question.questionId)
         question.title = request.form.get('question', question.title)
@@ -197,7 +199,7 @@ def edit_question(question_id):
         try:
             db.session.commit()
             flash("Question updated successfully!", "success")
-            return redirect(url_for('view_questions', chapter_id=question.chapter_id))
+            return redirect(url_for('crud.view_questions', chapter_id=question.chapter_id))
         except Exception as e:
             db.session.rollback()
             flash("An error occurred while updating the question.", "danger")
@@ -205,17 +207,17 @@ def edit_question(question_id):
     return render_template('admin_side/crud_temp/edit_question.html', question=question)
 
 # Delete question route
-@app.route('/admin/delete_question/<int:question_id>', methods=['GET','POST'])
+@crud.route('/admin/delete_question/<int:question_id>', methods=['GET','POST'])
 @admin_required
 def delete_question(question_id):
     question = Question.query.get(question_id)
     db.session.delete(question)
     db.session.commit()
     flash('Question deleted successfully', 'success')
-    return redirect(url_for('view_questions', chapter_id=question.chapter_id))
+    return redirect(url_for('crud.view_questions', chapter_id=question.chapter_id))
 
 # Create Quiz route
-@app.route('/admin/create/quiz', methods=['GET', 'POST'])
+@crud.route('/admin/create/quiz', methods=['GET', 'POST'])
 @admin_required
 def create_quiz():
     if request.method == 'POST':
@@ -231,13 +233,13 @@ def create_quiz():
         quizId = Quiz.query.filter_by(quizId=quiz_Id).first()
         if quizId:
             flash('Quiz Id already exists!', 'danger')
-            return redirect(url_for('create_quiz'))
+            return redirect(url_for('crud.create_quiz'))
         
         exist_subject_id = Quiz.query.filter_by(subject_id=subject_id).first()
         exist_chapter_id = Quiz.query.filter_by(chapter_id=chapter_id).first()
         if exist_subject_id and exist_chapter_id:
             flash('Quiz already exist!', 'danger')
-            return redirect(url_for('create_quiz'))
+            return redirect(url_for('crud.create_quiz'))
         
         due_date = datetime.strptime(due_date_str, '%Y-%m-%dT%H:%M')
 
@@ -246,8 +248,7 @@ def create_quiz():
         db.session.add(new_quiz)
         db.session.commit()
         flash('Quiz created successfully!', 'success')
-        return redirect(url_for('view_quizzes'))
-
+        return redirect(url_for('main.view_quizzes'))
     subjects = Subject.query.all()
     chapters = {
         subject.id: [{"id": ch.id, "name": ch.chapter_name, "question_count": len(ch.questions)} for ch in subject.chapters]
@@ -256,9 +257,8 @@ def create_quiz():
 
     return render_template('admin_side/crud_temp/create_quiz.html', subjects=subjects, chapters=json.dumps(chapters))
 
-
 # edit quiz
-@app.route('/edit/quiz/<int:quiz_id>', methods=['GET', 'POST'])
+@crud.route('/edit/quiz/<int:quiz_id>', methods=['GET', 'POST'])
 @admin_required
 def edit_quiz(quiz_id):
     quiz = Quiz.query.get_or_404(quiz_id)
@@ -288,22 +288,22 @@ def edit_quiz(quiz_id):
 
         db.session.commit()
         flash('Quiz updated successfully!', 'success')
-        return redirect(url_for('view_quizzes'))
+        return redirect(url_for('main.view_quizzes'))
 
     return render_template('admin_side/crud_temp/edit_quiz.html', quiz=quiz, subjects=subjects)
 
 # Route to delete a quiz
-@app.route('/admin/delete_quiz/<int:quiz_id>', methods=['POST'])
+@crud.route('/admin/delete_quiz/<int:quiz_id>', methods=['POST'])
 @admin_required
 def delete_quiz(quiz_id):
     quiz = Quiz.query.get_or_404(quiz_id)
     quiz.is_deleted = True
     db.session.commit()
     flash("Quiz deleted successfully!", "success")
-    return redirect(url_for('view_quizzes'))
+    return redirect(url_for('main.view_quizzes'))
 
 # Routes for permanent delete a quiz
-@app.route('/admin/permanent_delete_quiz/<int:quiz_id>', methods=['GET', 'POST'])
+@crud.route('/admin/permanent_delete_quiz/<int:quiz_id>', methods=['GET', 'POST'])
 @admin_required
 def permanently_delete_quiz(quiz_id):
     quiz = Quiz.query.get_or_404(quiz_id)
@@ -319,20 +319,21 @@ def permanently_delete_quiz(quiz_id):
     db.session.delete(quiz)
     db.session.commit()
     flash("Quiz permanently deleted successfully!", "success")
-    return redirect(url_for('view_quizzes'))
+    return redirect(url_for('main.view_quizzes'))
 
 # Route for reactive a quiz
-@app.route('/admin/reactive_quiz/<int:quiz_id>', methods=['POST'])
+@crud.route('/admin/reactive_quiz/<int:quiz_id>', methods=['POST'])
 @admin_required
 def reactive_quiz(quiz_id):
     quiz = Quiz.query.get_or_404(quiz_id)
     quiz.is_deleted = False
     db.session.commit()
     flash("Quiz reactivated successfully!", "success")
-    return redirect(url_for('view_quizzes'))
+    return redirect(url_for('main.view_quizzes'))
 
+# view_quizzes
 # route for delete user
-@app.route('/admin/delete_user/<int:user_id>', methods=['GET', 'POST'])
+@crud.route('/admin/delete_user/<int:user_id>', methods=['GET', 'POST'])
 @admin_required
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
@@ -348,4 +349,4 @@ def delete_user(user_id):
     db.session.delete(user)
     db.session.commit()
     flash("User deleted successfully!", "success")
-    return redirect(url_for('user_list'))
+    return redirect(url_for('main.user_list'))

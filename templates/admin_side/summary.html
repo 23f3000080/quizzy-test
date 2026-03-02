@@ -3,7 +3,7 @@
 {% block content %}
 <!-- Circular Button for "Users" -->
  <div class="d-flex justify-content-end mt-2 me-4">
-    <a href="{{ url_for('user_list') }}" class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
+    <a href="{{ url_for('main.user_list') }}" class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
     style="width: 60px; height: 60px; font-size: 15px; text-align: center; box-shadow: 2px 2px 10px rgba(0,0,0,0.2);">
     👥Users
  </a>
@@ -27,13 +27,13 @@
                 <td>{{ quiz.quiz_Id }}</td>
                 <td>{{ quiz.title }}</td>
                 <td>
-                    <a href="{{ url_for('attempted_users', quiz_id=quiz.quiz_id) }}" 
+                    <a href="{{ url_for('main.attempted_users', quiz_id=quiz.quiz_id) }}" 
                        class="btn btn-success btn-sm">
                         {{ quiz.attempted }}
                     </a>
                 </td>
                 <td>
-                    <a href="{{ url_for('not_attempted_users', quiz_id=quiz.quiz_id) }}" 
+                    <a href="{{ url_for('main.not_attempted_users', quiz_id=quiz.quiz_id) }}" 
                        class="btn btn-danger btn-sm">
                         {{ quiz.not_attempted }}
                     </a>

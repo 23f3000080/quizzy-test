@@ -1,13 +1,12 @@
 from flask_sqlalchemy import SQLAlchemy
-from app import app
 from datetime import datetime
 
-db = SQLAlchemy(app)
+db = SQLAlchemy()
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(100), nullable=False)
+    password = db.Column(db.String(255), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     qualification = db.Column(db.String(100), nullable=False)
     dob = db.Column(db.String(10), nullable=False)
@@ -107,6 +106,3 @@ class UserAnswer(db.Model):
     user = db.relationship('User', backref='answers', lazy=True)
     question = db.relationship('Question', backref='answers', lazy=True)
     quiz = db.relationship('Quiz', backref='answers', lazy=True)
-
-with app.app_context():
-    db.create_all()

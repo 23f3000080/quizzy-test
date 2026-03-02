@@ -10,7 +10,7 @@
                 </div>
                 <div class="card-body">
                     <!-- Chapter Form -->
-                    <form action="{{ url_for('add_chapter', subject_id=subject.id) }}" method="POST">
+                    <form action="{{ url_for('crud.add_chapter', subject_id=subject.id) }}" method="POST">
                         <div class="mb-3">
                             <label for="chapterId" class="form-label">Chapter ID</label>
                             <input type="text" class="form-control" id="chapterId" name="chapterId" required>
@@ -21,7 +21,7 @@
                         </div>
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-success">Add Chapter</button>
-                            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Cancel</a> 
+                            <a href="{{ url_for('main.admin_dashboard') }}" class="btn btn-secondary">Cancel</a> 
                         </div>
                     </form>
                 </div>

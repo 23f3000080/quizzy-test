@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container mt-4 card p-4 mb-3" style="width: 60%; background-color: #adcbe8;">
     <h2>Edit Quiz</h2>
-    <form action="{{ url_for('edit_quiz', quiz_id=quiz.id) }}" method="POST">
+    <form action="{{ url_for('crud.edit_quiz', quiz_id=quiz.id) }}" method="POST">
         <div class="mb-3">
             <label for="quizId" class="form-label">Quiz ID</label>
             <input type="text" class="form-control" id="quizId" name="quizId" value="{{ quiz.quizId }}" required>
@@ -49,7 +49,7 @@
             <input type="datetime-local" class="form-control" id="due_date" name="due_date" value="{{ quiz.due_date }}" required>
         </div>
         <button type="submit" class="btn btn-success">Update Quiz</button>
-        <a href="{{ url_for('view_quizzes') }}" class="btn btn-secondary">Cancel</a>
+        <a href="{{ url_for('main.view_quizzes') }}" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
 {% endblock %}

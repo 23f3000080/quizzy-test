@@ -45,7 +45,7 @@
             </div>
         </div>
 
-        <form id="quizForm" action="{{ url_for('submit_quiz', quiz_id=quiz.id) }}" method="POST">
+        <form id="quizForm" action="{{ url_for('main.submit_quiz', quiz_id=quiz.id) }}" method="POST">
             {% for question in questions %}
             <div class="card mb-4 shadow-sm">
                 <div class="card-body">
@@ -92,7 +92,7 @@
             alert('Time is up! Quiz submitted.');
             document.getElementById('quizForm').submit();
             setTimeout(() => {
-                window.location.href = "{{ url_for('user_dashboard') }}";
+                window.location.href = "{{ url_for('main.user_dashboard') }}";
             }, 3000);  // Wait 3 seconds before redirecting
         } else {
             time--;

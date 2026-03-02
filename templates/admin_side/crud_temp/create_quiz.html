@@ -6,7 +6,7 @@
 
     <!-- Quiz Creation Form -->
      <div>
-        <form action="{{ url_for('create_quiz') }}" method="POST" class="p-4 border rounded shadow bg-white text-dark">
+        <form action="{{ url_for('crud.create_quiz') }}" method="POST" class="p-4 border rounded shadow bg-white text-dark">
             <div class="mb-3">
                 <label for="quizId" class="form-label">Quiz ID:</label>
                 <input type="text" class="form-control" id="quizId" name="quizId" required>
@@ -57,7 +57,7 @@
             
     
             <button type="submit" class="btn btn-success">Create Quiz</button>
-            <a href="{{ url_for('view_quizzes') }}" class="btn btn-secondary">Cancel</a>
+            <a href="{{ url_for('main.view_quizzes') }}" class="btn btn-secondary">Cancel</a>
         </form>
      </div>
     

@@ -15,7 +15,7 @@
         <!-- Navbar Links & Search Bar -->
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <!-- Search Bar -->
-            <form action="{{ url_for('user_search_result') }}" method="POST" class="d-flex ms-auto me-3">
+            <form action="{{ url_for('main.user_search_result') }}" method="POST" class="d-flex ms-auto me-3">
                 <input class="form-control me-2" type="search" placeholder="Search..." aria-label="Search" name="search">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
@@ -23,19 +23,19 @@
             <!-- Navigation Links -->
             <ul class="navbar-nav fs-5">
                 <li class="nav-item mx-2">
-                    <a class="nav-link" style="color: #6fff27;" href="{{ url_for('user_dashboard') }}">Home</a>
+                    <a class="nav-link" style="color: #6fff27;" href="{{ url_for('main.user_dashboard') }}">Home</a>
                 </li>
                 <li class="nav-item mx-2">
-                    <a class="nav-link" style="color: #6fff27;" href="{{ url_for('user_score') }}">Score</a>
+                    <a class="nav-link" style="color: #6fff27;" href="{{ url_for('main.user_score') }}">Score</a>
                 </li>
                 <li class="nav-item mx-2">
-                    <a class="nav-link" style="color: #6fff27;" href="{{ url_for('user_summary') }}">Summary</a>
+                    <a class="nav-link" style="color: #6fff27;" href="{{ url_for('main.user_summary') }}">Summary</a>
                 </li>
                 <li class="nav-item mx-2">
-                    <a class="nav-link" style="color: #6fff27;" href="{{ url_for('user_profile') }}">Profile</a>
+                    <a class="nav-link" style="color: #6fff27;" href="{{ url_for('main.user_profile') }}">Profile</a>
                 </li>
                 <li class="nav-item mx-2">
-                    <a class="nav-link" style="color: #6fff27;" href="{{ url_for('logout') }}">Logout</a>
+                    <a class="nav-link" style="color: #6fff27;" href="{{ url_for('main.logout') }}">Logout</a>
                 </li>
             </ul>
         </div>

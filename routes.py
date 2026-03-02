@@ -1,5 +1,4 @@
-from flask import Flask, render_template, request, flash, redirect, url_for, session
-from app import app
+from flask import Flask, render_template, request, flash, redirect, url_for, session, Blueprint
 from models import db, User, Subject, Quiz, Question, QuizResult, Chapter, UserAnswer
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
@@ -9,12 +8,14 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import os
 
-@app.route('/')
+main = Blueprint('main', __name__)
+
+@main.route('/')
 def home():
     return render_template('home.html')
 
 # Route to register new user
-@app.route('/register', methods=['GET', 'POST'])
+@main.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
         username = request.form.get('username', '').strip()
@@ -26,17 +27,17 @@ def register():
 
         if not all([username, password, cpassword, name, qualification, dob]):
             flash('All fields are required', 'danger')
-            return redirect(url_for('register'))
+            return redirect(url_for('main.register'))
         
         if password != cpassword:
             flash('Password does not match', 'danger')
-            return redirect(url_for('register'))
+            return redirect(url_for('main.register'))
         
         #check user in database
         user = User.query.filter_by(username=username).first()
         if user:
             flash('User already exists!', 'danger')
-            return redirect(url_for('register'))
+            return redirect(url_for('main.register'))
 
         #hashing the password
         hash_password = generate_password_hash(password)   
@@ -48,13 +49,13 @@ def register():
         db.session.add(new_user)
         db.session.commit()
         flash('User created successfully', 'success')
-        return redirect(url_for('login'))
+        return redirect(url_for('main.login'))
     
 
     return render_template('register.html')
 
 #login route
-@app.route('/login', methods=['GET', 'POST'])
+@main.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form.get('username').strip()
@@ -62,16 +63,16 @@ def login():
 
         if not all([username, password]):
             flash('All fields are required', 'danger')
-            return redirect(url_for('login'))
+            return redirect(url_for('main.login'))
         
         user = User.query.filter_by(username=username).first()
         if not user:
             flash('User does not exist', 'danger')
-            return redirect(url_for('login'))
+            return redirect(url_for('main.login'))
         
         if not check_password_hash(user.password, password):
             flash('Password is incorrect', 'danger')
-            return redirect(url_for('login'))
+            return redirect(url_for('main.login'))
         
         session['id'] = user.id
         session['user'] = user.username
@@ -80,10 +81,10 @@ def login():
 
         if user.is_admin:
             flash('Admin login successfully', 'success')
-            return redirect(url_for('admin_dashboard'))
+            return redirect(url_for('main.admin_dashboard'))
         else:
             flash('Login successfully', 'success')
-            return redirect(url_for('user_dashboard'))
+            return redirect(url_for('main.user_dashboard'))
     return render_template('login.html')
 
 # decorator for user required
@@ -93,16 +94,16 @@ def user_required(func):
     def inner(*args, **kwargs):
         if "id" not in session:
             flash('Please login to continue', 'info')
-            return redirect(url_for('login'))
+            return redirect(url_for('main.login'))
         
         user = User.query.get(session['id'])
         if not user:  
             flash('User not found, please login again', 'danger')
-            return redirect(url_for('login'))
+            return redirect(url_for('main.login'))
 
         if user.is_admin:  # Block admin access
             flash('You are not allowed to access this page', 'danger')
-            return redirect(url_for('home'))  # Redirect admin to home
+            return redirect(url_for('main.home'))  # Redirect admin to home
 
         return func(*args, **kwargs)
 
@@ -115,30 +116,30 @@ def admin_required(func):
     def inner(*args, **kwargs):
         if 'id' not in session:
             flash('Please login to continue', 'danger')
-            return redirect(url_for('login'))
+            return redirect(url_for('main.login'))
 
         user = User.query.get(session['id'])
         if not user:  
             flash('User not found, please login again', 'danger')
-            return redirect(url_for('login'))
+            return redirect(url_for('main.login'))
 
         if not user.is_admin:  # Block normal user access
             flash('You are not authorized to access this page', 'danger')
-            return redirect(url_for('home'))  # Redirect user to home
+            return redirect(url_for('main.home'))  # Redirect user to home
 
         return func(*args, **kwargs)
 
     return inner 
 
 #logout route
-@app.route('/logout')
+@main.route('/logout')
 def logout():
     session.clear()
     flash('Logout Successfully', 'info')
-    return redirect(url_for('login'))
+    return redirect(url_for('main.login'))
 
 #admin dashboard
-@app.route('/admin/dashboard')
+@main.route('/admin/dashboard')
 @admin_required
 def admin_dashboard():
     user = session.get('name', 'User')
@@ -146,14 +147,14 @@ def admin_dashboard():
     return render_template("admin_side/admin_dashboard.html", user=user, subjects=subjects)
 
 #Admin side view Quizzes
-@app.route('/admin/view_quizzes')
+@main.route('/admin/view_quizzes')
 @admin_required
 def view_quizzes():
     quizzes = Quiz.query.all()
     return render_template("admin_side/view_quizzes.html", quizzes=quizzes)
 
 #Admin side summary
-@app.route('/admin/summary')
+@main.route('/admin/summary')
 @admin_required
 def summary():
     quizzes = Quiz.query.all()
@@ -180,7 +181,7 @@ def summary():
     return render_template("admin_side/summary.html", summary_data=summary_data)
 
 #admin seach route
-@app.route('/admin/search')
+@main.route('/admin/search')
 @admin_required
 def search():
     return render_template("admin_side/search.html")
@@ -188,7 +189,7 @@ def search():
 #--------------User Side Routes----------------
 
 #User side dashboard
-@app.route('/user/dashboard')
+@main.route('/user/dashboard')
 @user_required
 def user_dashboard():
     user_id = session.get('id')
@@ -206,15 +207,16 @@ def user_dashboard():
     return render_template("user_side/user_dashboard.html", user=user, quizzes=quizzes, 
                            attempted_quiz_id=attempted_quiz_id, now=now)
 
+
 #User side score route
-@app.route('/user/score')
+@main.route('/user/score')
 @user_required
 def user_score():
     user_id = session.get('id')
 
     if not user_id:
         flash("You must be logged in to view results.", "danger")
-        return redirect(url_for('login'))
+        return redirect(url_for('main.login'))
 
     # Fetch all quiz attempts by the user
     attempts = (
@@ -227,14 +229,14 @@ def user_score():
     return render_template("user_side/user_score.html", attempts=attempts)
 
 #User side summary route
-@app.route('/user/summary')
+@main.route('/user/summary')
 @user_required
 def user_summary():
     user_id = session.get('id')
 
     if not user_id:
         flash("You must be logged in to view results.", "danger")
-        return redirect(url_for('login'))
+        return redirect(url_for('main.login'))
 
     # Fetch user's quiz attempts with quiz titles
     attempts = (
@@ -248,7 +250,7 @@ def user_summary():
     # Handle case where no attempts exist
     if not attempts:
         flash("No Records Found", 'info')
-        return redirect(url_for("user_dashboard"))
+        return redirect(url_for("main.user_dashboard"))
 
     # Calculate percentages from raw marks
     quiz_names = [quiz.title for _, quiz in attempts]
@@ -278,7 +280,7 @@ def user_summary():
     return render_template('user_side/user_summary.html', avg_score=avg_score, graph_url=url_for('static', filename=f'graph/{graph_filename}'))
 
 #user profile update route
-@app.route('/user/profile', methods=['GET', 'POST'])
+@main.route('/user/profile', methods=['GET', 'POST'])
 @user_required
 def user_profile():
     user = User.query.get(session['id'])
@@ -290,15 +292,15 @@ def user_profile():
 
         if not all([cpassword, name, dob, qualification]):
             flash('Please fill all the fields', 'danger')
-            return redirect(url_for('user_profile'))
+            return redirect(url_for('main.user_profile'))
         
         if not check_password_hash(user.password, cpassword):
             flash('Incorrect Current Password', 'danger')
-            return redirect(url_for('user_profile'))
+            return redirect(url_for('main.user_profile'))
         
         if name == user.name and dob == user.dob and qualification == user.qualification:
             flash('No changes found', 'info')
-            return redirect(url_for('user_profile'))
+            return redirect(url_for('main.user_profile'))
         
         session['name'] = name
         user.name = name
@@ -306,12 +308,12 @@ def user_profile():
         user.qualification = qualification
         db.session.commit()
         flash('Profile updated successfully', 'success')
-        return redirect(url_for('user_profile'))
+        return redirect(url_for('main.user_profile'))
 
     return render_template("user_side/user_profile.html", user=user)
 
 #start quiz route
-@app.route('/quiz/start/<int:quiz_id>')
+@main.route('/quiz/start/<int:quiz_id>')
 @user_required
 def start_quiz(quiz_id):
     quiz = Quiz.query.get(quiz_id)
@@ -322,11 +324,11 @@ def start_quiz(quiz_id):
     attempt = QuizResult.query.filter_by(user_id=user_id, quiz_id=quiz_id).first()
     if attempt:
         flash("You have already attempted this quiz.", "danger")
-        return redirect(url_for('user_dashboard'))
+        return redirect(url_for('main.user_dashboard'))
     return render_template("user_side/start_quiz.html", quiz=quiz, questions=questions)
 
 # submit quiz route
-@app.route('/submit/quiz/<quiz_id>', methods=['POST'])
+@main.route('/submit/quiz/<quiz_id>', methods=['POST'])
 @user_required
 def submit_quiz(quiz_id):
     quiz = Quiz.query.get_or_404(quiz_id)
@@ -334,13 +336,13 @@ def submit_quiz(quiz_id):
 
     if not user_id:
         flash("You must be logged in to submit the quiz.", "danger")
-        return redirect(url_for('login'))
+        return redirect(url_for('main.login'))
 
     # Check if the user has already submitted this quiz
     existing_attempt = QuizResult.query.filter_by(user_id=user_id, quiz_id=quiz_id).first()
     if existing_attempt:
         flash("You have already submitted this quiz.", "warning")
-        return redirect(url_for('user_dashboard'))
+        return redirect(url_for('main.user_dashboard'))
 
     # Fetch questions and calculate total marks
     questions = Question.query.filter_by(chapter_id=quiz.chapter_id).all()
@@ -388,10 +390,10 @@ def submit_quiz(quiz_id):
     # Calculate percentage and show results
     percentage_score = (score / total_marks) * 100
     flash(f"Quiz submitted successfully! You scored {score} out of {total_marks} ({percentage_score:.2f}%)", "success")
-    return redirect(url_for('user_dashboard'))
+    return redirect(url_for('main.user_dashboard'))
 
 # View attempted quiz route
-@app.route('/user/view/quiz/<quiz_id>')
+@main.route('/user/view/quiz/<quiz_id>')
 @user_required
 def view_attempted_quiz(quiz_id):
     user_id = session.get('id')
@@ -402,7 +404,7 @@ def view_attempted_quiz(quiz_id):
     attempt = QuizResult.query.filter_by(user_id=user_id, quiz_id=quiz_id).first()
     if not attempt:
         flash("You have not attempted this quiz yet.", "danger")
-        return redirect(url_for('user_dashboard'))
+        return redirect(url_for('main.user_dashboard'))
 
     # Fetch user's answers for this quiz
     user_answers = UserAnswer.query.filter_by(user_id=user_id, quiz_id=quiz_id).all()
@@ -422,7 +424,7 @@ def view_attempted_quiz(quiz_id):
     )
 
 # Forget password route
-@app.route('/forget/password', methods=['GET', 'POST'])
+@main.route('/forget/password', methods=['GET', 'POST'])
 def forget_password():
     if request.method == 'POST':
         username = request.form.get('username').strip()
@@ -431,26 +433,26 @@ def forget_password():
 
         if not all([username, dob, password]):
             flash('All fields are required', 'danger')
-            return redirect(url_for('forget_password'))
+            return redirect(url_for('main.forget_password'))
 
         user = User.query.filter_by(username=username).first()
         if not user:
             flash('User does not exist', 'danger')
-            return redirect(url_for('forget_password'))
+            return redirect(url_for('main.forget_password'))
         
         if user.dob != dob:
             flash('Date of birth is incorrect', 'danger')
-            return redirect(url_for('forget_password'))
+            return redirect(url_for('main.forget_password'))
 
         user.password = generate_password_hash(password)
         db.session.commit()
         flash('Password updated successfully', 'success')
-        return redirect(url_for('login'))
+        return redirect(url_for('main.login'))
 
     return render_template('forget_password.html')
 
 # Search Function for admin
-@app.route("/search/result", methods=["POST"])
+@main.route("/search/result", methods=["POST"])
 @admin_required
 def admin_search_result():
     query = request.form.get("search", "").strip()
@@ -478,7 +480,7 @@ def admin_search_result():
     return render_template("admin_side/search_result.html", results=results, search_query=query)
 
 # Search Function for user
-@app.route('/user/search/result', methods=['POST'])
+@main.route('/user/search/result', methods=['POST'])
 @user_required
 def user_search_result():
     user_id = session.get('id')
@@ -520,7 +522,7 @@ def user_search_result():
     return render_template('user_side/search_result.html', results=results, quiz_attempt_ids=quiz_attempt_ids, search=search, now=now)
 
 #users who attempt the quiz
-@app.route('/admin/quiz/<int:quiz_id>/attempted')
+@main.route('/admin/quiz/<int:quiz_id>/attempted')
 @admin_required
 def attempted_users(quiz_id):
     quiz = Quiz.query.get_or_404(quiz_id)
@@ -537,7 +539,7 @@ def attempted_users(quiz_id):
         'admin_side/attempted_users.html', quiz=quiz, users_attempted=users_attempted)
 
 #users who not attempt the quiz
-@app.route('/admin/quiz/<int:quiz_id>/not_attempted')
+@main.route('/admin/quiz/<int:quiz_id>/not_attempted')
 @admin_required
 def not_attempted_users(quiz_id):
     quiz = Quiz.query.get_or_404(quiz_id)
@@ -560,8 +562,10 @@ def not_attempted_users(quiz_id):
         'admin_side/not_attempted_users.html', quiz=quiz, users=not_attempted)
 
 # Route to view all users
-@app.route('/admin/user/list')
+@main.route('/admin/user/list')
 @admin_required
 def user_list():
     users = User.query.filter(User.is_admin == False).all()
     return render_template('admin_side/user_list.html', users=users)
+
+# summary

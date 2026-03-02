@@ -74,7 +74,7 @@
                                         <td>{{ quiz.duration }} minutes</td>
                                         <td>{{ quiz.due_date.strftime('%d-%m-%Y %H:%M') if quiz.due_date else 'No Due Date' }}</td>
                                         <td>
-                                            <a href="{{ url_for('user_score') }}" class="btn  btn-primary">Attempted</a>
+                                            <a href="{{ url_for('main.user_score') }}" class="btn  btn-primary">Attempted</a>
                                         </td>
                                     </tr>
                                 {% else %}
@@ -108,11 +108,11 @@
                                     <td>{{ quiz.due_date.strftime('%d-%m-%Y %H:%M') if quiz.due_date else 'No Due Date' }}</td>
                                     <td>
                                         {% if quiz.id in attempted_quiz_id %}
-                                        <a href="{{ url_for('user_score') }}" class="btn btn-primary">Attempted</a>
+                                        <a href="{{ url_for('main.user_score') }}" class="btn btn-primary">Attempted</a>
                                         {% elif now > quiz.due_date %}
                                         <button class="btn btn-danger">Expired</button>
                                         {% else %}
-                                        <a href="{{ url_for('start_quiz', quiz_id=quiz.id) }}"
+                                        <a href="{{ url_for('main.start_quiz', quiz_id=quiz.id) }}"
                                             class="btn btn-success btn-sm">Start Quiz</a>
                                         {% endif %}
                                     </td>

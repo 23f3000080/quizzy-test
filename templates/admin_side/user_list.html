@@ -28,7 +28,7 @@
                     <td>{{ user.qualification }}</td>
                     <td>{{ user.joined_at.strftime('%d-%m-%Y') }}</td>
                     <td>
-                        <a href="{{ url_for('delete_user', user_id=user.id) }}" class="btn btn-danger btn-sm">Remove</a>
+                        <a href="{{ url_for('crud.delete_user', user_id=user.id) }}" class="btn btn-danger btn-sm">Remove</a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -37,7 +37,7 @@
     </div>
     <!-- Go Back -->
     <div class="d-flex justify-content-center mt-4">
-        <a href="{{ url_for('summary') }}" class="btn btn-primary">Go Back</a>
+        <a href="{{ url_for('main.summary') }}" class="btn btn-primary">Go Back</a>
     </div>
 {% else %}
     <p class="text-center">No users found!</p>

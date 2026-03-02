@@ -21,7 +21,7 @@
                 {% if quiz.is_deleted %}
                     {% if quiz.id in quiz_attempt_ids %}
                         <!-- Deleted but Attempted -->
-                        <a href="{{ url_for('view_attempted_quiz', quiz_id=quiz.id) }}" 
+                        <a href="{{ url_for('main.view_attempted_quiz', quiz_id=quiz.id) }}" 
                         class="btn btn-primary" 
                         style="background: rgb(67, 128, 61)">
                         ✅ Attempted
@@ -33,7 +33,7 @@
                 {% else %}
                     {% if quiz.id in quiz_attempt_ids %}
                         <!-- Active and Attempted -->
-                        <a href="{{ url_for('view_attempted_quiz', quiz_id=quiz.id) }}" 
+                        <a href="{{ url_for('main.view_attempted_quiz', quiz_id=quiz.id) }}" 
                         class="btn btn-primary" 
                         style="background: rgb(67, 128, 61)">
                         ✅ Attempted
@@ -43,7 +43,7 @@
                         {% if now > quiz.due_date %}
                             <button class="btn btn-danger">Expired</button>  
                         {% else %}
-                            <a href="{{ url_for('start_quiz', quiz_id=quiz.id) }}" 
+                            <a href="{{ url_for('main.start_quiz', quiz_id=quiz.id) }}" 
                             class="btn btn-success btn-sm">
                             ▶️ Start Quiz
                             </a>
@@ -54,11 +54,11 @@
             {% endfor %}
         </div><hr>
         <div>
-            <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary">Back</a>
+            <a href="{{ url_for('main.user_dashboard') }}" class="btn btn-secondary">Back</a>
         </div>
     {% else %}
         <p class="text-muted">No results found.</p><br>
-        <a href="{{ url_for('user_dashboard') }}" class="btn btn-secondary">Back</a>    
+        <a href="{{ url_for('main.user_dashboard') }}" class="btn btn-secondary">Back</a>    
     {% endif %} 
 </div>
 
